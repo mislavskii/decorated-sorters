@@ -43,6 +43,13 @@ class BenchmarkDecorator(AbstractDecorator):
         return value
 
 
+class LoggingDecorator(AbstractDecorator):
+    def execute(self, upper_bound: int) -> int:
+        logging.info(f'Calling {self._decorated.__class__.__name__}.')
+        value = self._decorated.execute(upper_bound)
+        logging.info(f'Completed execution of {self._decorated.__class__.__name__}.')
+        return value
+
 def print_execution_time(some_func, *args, **kwargs):
     from time import time
     print()
@@ -58,7 +65,8 @@ def main() -> None:
     logging.basicConfig(level=logging.INFO)
     component = ConcreteComponent()
     benchmarked = BenchmarkDecorator(component)
-    value = benchmarked.execute(100000)
+    logged = LoggingDecorator(benchmarked)
+    value = logged.execute(100000)
     logging.info(f'Found {value} prime numbers.')
 
 
