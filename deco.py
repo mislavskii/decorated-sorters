@@ -7,6 +7,7 @@ from typing import Any, Callable
 
 logging.basicConfig(level=logging.INFO)
 
+
 def is_prime(number: int) -> bool:
     if number < 2:
         return False
@@ -14,10 +15,6 @@ def is_prime(number: int) -> bool:
         if number % element == 0:
             return False
     return True
-
-
-def count_primes(upper_bound: int) -> int:
-    return sum(is_prime(number) for number in range(upper_bound))
 
 
 def benchmark(func: Callable[..., Any]) -> Callable[..., Any]:
@@ -30,6 +27,7 @@ def benchmark(func: Callable[..., Any]) -> Callable[..., Any]:
             f'Execution of {func.__name__} took {run_time:.3f} seconds.'
         )
         return value
+
     return wrapper
 
 
@@ -38,6 +36,11 @@ def with_logging(func, *args) -> Any:
     value = func(*args)
     logging.info(f'Completed execution of {func.__name__}.')
     return value
+
+
+@benchmark
+def count_primes(upper_bound: int) -> int:
+    return sum(is_prime(number) for number in range(upper_bound))
 
 
 def print_execution_time(some_func, *args, **kwargs):
@@ -52,7 +55,7 @@ def print_execution_time(some_func, *args, **kwargs):
 
 
 def main() -> None:
-    value = benchmark(count_primes)(100000)
+    value = count_primes(100000)
     logging.info(f'Found {value} prime numbers.')
 
 

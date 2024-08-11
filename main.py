@@ -16,5 +16,5 @@ if __name__ == '__main__':
     [print(deco.print_execution_time(sorter, data)[:7]) for sorter in sorters]
 
     print()
-    [print(deco.benchmark(sorter)(data)[:7]) for sorter in sorters]
+    [print(sorter(data)[:7]) for sorter in sorters]
 
