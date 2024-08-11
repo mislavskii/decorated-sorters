@@ -3,7 +3,7 @@
 import logging
 from math import sqrt
 from time import perf_counter
-from typing import Any
+from typing import Any, Callable
 
 logging.basicConfig(level=logging.INFO)
 
@@ -20,15 +20,17 @@ def count_primes(upper_bound: int) -> int:
     return sum(is_prime(number) for number in range(upper_bound))
 
 
-def benchmark(func, *args) -> Any:
-    start_time = perf_counter()
-    value = func(*args)
-    end_time = perf_counter()
-    run_time = end_time - start_time
-    logging.info(
-        f'Execution of {func.__name__} took {run_time:.3f} seconds.'
-    )
-    return value
+def benchmark(func: Callable[..., Any]) -> Callable[..., Any]:
+    def wrapper(*args: Any, **kwargs: Any):
+        start_time = perf_counter()
+        value = func(*args, **kwargs)
+        end_time = perf_counter()
+        run_time = end_time - start_time
+        logging.info(
+            f'Execution of {func.__name__} took {run_time:.3f} seconds.'
+        )
+        return value
+    return wrapper
 
 
 def with_logging(func, *args) -> Any:
@@ -50,7 +52,7 @@ def print_execution_time(some_func, *args, **kwargs):
 
 
 def main() -> None:
-    value = benchmark(count_primes, 100000)
+    value = benchmark(count_primes)(100000)
     logging.info(f'Found {value} prime numbers.')
 
 
