@@ -1,7 +1,6 @@
 # done with the help of https://www.youtube.com/watch?v=QH5fw9kxDQA
 
 import logging
-from abc import ABC, abstractmethod
 from math import sqrt
 from time import perf_counter
 from typing import Any
@@ -27,7 +26,7 @@ def benchmark(func, *args) -> Any:
     end_time = perf_counter()
     run_time = end_time - start_time
     logging.info(
-        f'Execution of {func.__name__} took {run_time} seconds.'
+        f'Execution of {func.__name__} took {run_time:.3f} seconds.'
     )
     return value
 
