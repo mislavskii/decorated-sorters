@@ -4,6 +4,7 @@ import logging
 from abc import ABC, abstractmethod
 from math import sqrt
 from time import perf_counter
+from typing import Any
 
 
 def is_prime(number: int) -> bool:
@@ -15,40 +16,27 @@ def is_prime(number: int) -> bool:
     return True
 
 
-class AbstractComponent(ABC):
-    @abstractmethod
-    def execute(self, upper_bound: int) -> int:
-        pass
+def count_primes(upper_bound: int) -> int:
+    return sum(is_prime(number) for number in range(upper_bound))
 
 
-class ConcreteComponent(AbstractComponent):
-    def execute(self, upper_bound: int) -> int:
-        return sum(is_prime(number) for number in range(upper_bound))
+def benchmark(func, *args) -> Any:
+    start_time = perf_counter()
+    value = func(*args)
+    end_time = perf_counter()
+    run_time = end_time - start_time
+    logging.info(
+        f'Execution of {func.__name__} took {run_time} seconds.'
+    )
+    return value
 
 
-class AbstractDecorator(AbstractComponent):
-    def __init__(self, decorated: AbstractComponent) -> None:
-        self._decorated = decorated
+def with_logging(func, *args) -> Any:
+    logging.info(f'Calling {func.__name__}.')
+    value = func(*args)
+    logging.info(f'Completed execution of {func.__name__}.')
+    return value
 
-
-class BenchmarkDecorator(AbstractDecorator):
-    def execute(self, upper_bound: int) -> int:
-        start_time = perf_counter()
-        value = self._decorated.execute(upper_bound)
-        end_time = perf_counter()
-        run_time = end_time - start_time
-        logging.info(
-            f'Execution of {self._decorated.__class__.__name__} took {run_time} seconds.'
-        )
-        return value
-
-
-class LoggingDecorator(AbstractDecorator):
-    def execute(self, upper_bound: int) -> int:
-        logging.info(f'Calling {self._decorated.__class__.__name__}.')
-        value = self._decorated.execute(upper_bound)
-        logging.info(f'Completed execution of {self._decorated.__class__.__name__}.')
-        return value
 
 def print_execution_time(some_func, *args, **kwargs):
     from time import time
@@ -63,10 +51,7 @@ def print_execution_time(some_func, *args, **kwargs):
 
 def main() -> None:
     logging.basicConfig(level=logging.INFO)
-    component = ConcreteComponent()
-    benchmarked = BenchmarkDecorator(component)
-    logged = LoggingDecorator(benchmarked)
-    value = logged.execute(100000)
+    value = benchmark(count_primes, 100000)
     logging.info(f'Found {value} prime numbers.')
 
 
