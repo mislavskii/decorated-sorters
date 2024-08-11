@@ -22,12 +22,12 @@ def selection_sort(listlike):
 def insertion_sort(listlike):
     ls = listlike.copy()
     for i in range(1, len(ls)):
-        key = ls[i]
+        current = ls[i]
         j = i - 1
-        while ls[j] > key and j >= 0:
-            ls[j + 1] = ls [j]
+        while ls[j] > current and j >= 0:
+            ls[j + 1] = ls[j]
             j -= 1
-        ls[j + 1] = key
+        ls[j + 1] = current
     return ls
 
 
