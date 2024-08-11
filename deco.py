@@ -31,14 +31,17 @@ def benchmark(func: Callable[..., Any]) -> Callable[..., Any]:
     return wrapper
 
 
-def with_logging(func, *args) -> Any:
-    logging.info(f'Calling {func.__name__}.')
-    value = func(*args)
-    logging.info(f'Completed execution of {func.__name__}.')
-    return value
+def with_logging(func: Callable[..., Any]) -> Callable[..., Any]:
+    def wrapper(*args: Any, **kwargs: Any):
+        logging.info(f'Calling {func.__name__}.')
+        value = func(*args, **kwargs)
+        logging.info(f'Completed execution of {func.__name__}.')
+        return value
+    return wrapper
 
 
 @benchmark
+@with_logging
 def count_primes(upper_bound: int) -> int:
     return sum(is_prime(number) for number in range(upper_bound))
 
