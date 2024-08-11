@@ -1,6 +1,7 @@
-from deco import benchmark
+from deco import benchmark, with_logging
 
 
+@with_logging
 @benchmark
 def bubble_sort(listlike):
     ls = listlike.copy()
@@ -11,6 +12,7 @@ def bubble_sort(listlike):
     return ls
 
 
+@with_logging
 @benchmark
 def selection_sort(listlike):
     ls = listlike.copy()
@@ -24,6 +26,7 @@ def selection_sort(listlike):
     return ls
 
 
+@with_logging
 @benchmark
 def insertion_sort(listlike):
     ls = listlike.copy()

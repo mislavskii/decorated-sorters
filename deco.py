@@ -4,6 +4,7 @@ import logging
 from math import sqrt
 from time import perf_counter
 from typing import Any, Callable
+import functools
 
 logging.basicConfig(level=logging.INFO)
 
@@ -18,6 +19,7 @@ def is_prime(number: int) -> bool:
 
 
 def benchmark(func: Callable[..., Any]) -> Callable[..., Any]:
+    @functools.wraps(func)
     def wrapper(*args: Any, **kwargs: Any):
         start_time = perf_counter()
         value = func(*args, **kwargs)
@@ -32,6 +34,7 @@ def benchmark(func: Callable[..., Any]) -> Callable[..., Any]:
 
 
 def with_logging(func: Callable[..., Any]) -> Callable[..., Any]:
+    @functools.wraps(func)
     def wrapper(*args: Any, **kwargs: Any):
         logging.info(f'Calling {func.__name__}.')
         value = func(*args, **kwargs)
