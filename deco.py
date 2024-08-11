@@ -7,6 +7,7 @@ from typing import Any, Callable
 import functools
 
 logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger('deco')
 
 
 def is_prime(number: int) -> bool:
@@ -33,18 +34,20 @@ def benchmark(func: Callable[..., Any]) -> Callable[..., Any]:
     return wrapper
 
 
-def with_logging(func: Callable[..., Any]) -> Callable[..., Any]:
-    @functools.wraps(func)
-    def wrapper(*args: Any, **kwargs: Any):
-        logging.info(f'Calling {func.__name__}.')
-        value = func(*args, **kwargs)
-        logging.info(f'Completed execution of {func.__name__}.')
-        return value
-    return wrapper
+def with_logging(logger: logging.Logger):
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+        @functools.wraps(func)
+        def wrapper(*args: Any, **kwargs: Any):
+            logger.info(f'Calling {func.__name__}.')
+            value = func(*args, **kwargs)
+            logger.info(f'Completed execution of {func.__name__}.')
+            return value
+        return wrapper
+    return decorator
 
 
 @benchmark
-@with_logging
+@with_logging(logger)
 def count_primes(upper_bound: int) -> int:
     return sum(is_prime(number) for number in range(upper_bound))
 
