@@ -6,6 +6,7 @@ from math import sqrt
 from time import perf_counter
 from typing import Any
 
+logging.basicConfig(level=logging.INFO)
 
 def is_prime(number: int) -> bool:
     if number < 2:
@@ -50,7 +51,6 @@ def print_execution_time(some_func, *args, **kwargs):
 
 
 def main() -> None:
-    logging.basicConfig(level=logging.INFO)
     value = benchmark(count_primes, 100000)
     logging.info(f'Found {value} prime numbers.')
 
