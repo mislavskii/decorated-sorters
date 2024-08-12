@@ -6,17 +6,8 @@ from time import perf_counter
 from typing import Any, Callable
 import functools
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger('deco')
-
-
-def is_prime(number: int) -> bool:
-    if number < 2:
-        return False
-    for element in range(2, int(sqrt(number)) + 1):
-        if number % element == 0:
-            return False
-    return True
+logging.basicConfig(level=logging.INFO, format='%(levelname)s (%(module)s>%(name)s): %(message)s')
+default_logger = logging.getLogger('default')
 
 
 def benchmark(func: Callable[..., Any]) -> Callable[..., Any]:
@@ -34,20 +25,31 @@ def benchmark(func: Callable[..., Any]) -> Callable[..., Any]:
     return wrapper
 
 
-def with_logging(logger: logging.Logger):
-    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
-        @functools.wraps(func)
-        def wrapper(*args: Any, **kwargs: Any):
-            logger.info(f'Calling {func.__name__}.')
-            value = func(*args, **kwargs)
-            logger.info(f'Completed execution of {func.__name__}.')
-            return value
-        return wrapper
-    return decorator
+def with_logging(func: Callable[..., Any], logger: logging.Logger) -> Callable[..., Any]:
+    @functools.wraps(func)
+    def wrapper(*args: Any, **kwargs: Any):
+        logger.info(f'Calling {func.__name__}.')
+        value = func(*args, **kwargs)
+        logger.info(f'Completed execution of {func.__name__}.')
+        return value
+
+    return wrapper
+
+
+with_default_logger = functools.partial(with_logging, logger=default_logger)
+
+
+def is_prime(number: int) -> bool:
+    if number < 2:
+        return False
+    for element in range(2, int(sqrt(number)) + 1):
+        if number % element == 0:
+            return False
+    return True
 
 
 @benchmark
-@with_logging(logger)
+@with_default_logger
 def count_primes(upper_bound: int) -> int:
     return sum(is_prime(number) for number in range(upper_bound))
 
